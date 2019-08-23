@@ -29,9 +29,14 @@ stages:
       vmImage: $(poolImage)
     steps:
     - script: |
+        echo "installing NPM packages and building"
         npm install
         npm run build
+
         cd build 
+        echo "creating the spa folder on artifacts staging directory"
+        mkdir -p $(Build.ArtifactStagingDirectory)/spa
+        echo "copying files to artifacts staging directory"
         cp -v -R ./* $(Build.ArtifactStagingDirectory)/spa
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
