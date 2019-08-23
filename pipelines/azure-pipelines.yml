@@ -31,7 +31,7 @@ stages:
     - script: npm run build
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
-- stage: deploy
-  displayName: "Deploy"
-  dependsOn: build
-  jobs: []
+# - stage: deploy
+#   displayName: "Deploy"
+#   dependsOn: build
+#   jobs: []
