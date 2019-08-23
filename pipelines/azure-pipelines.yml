@@ -24,7 +24,7 @@ stages:
       displayName: 'dotnet build $(buildConfiguration)'
       workingDirectory: ./mvc
   - job: build_spa
-    displayName: "Build spa"
+    displayName: "Build SPA"
     pool: 
       vmImage: $(poolImage)
     steps:
