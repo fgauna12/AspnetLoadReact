@@ -12,7 +12,17 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
-  workingDirectory: ./mvc
+stages: 
+- stage: build
+  displayName: "Build"
+  jobs: 
+  - job: build_mvc
+    displayName: "Build MVC"
+    steps:
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: 'dotnet build $(buildConfiguration)'
+      workingDirectory: ./mvc
+- stage: deploy
+  displayName: "Deploy"
+  dependsOn: build
+  jobs: []
