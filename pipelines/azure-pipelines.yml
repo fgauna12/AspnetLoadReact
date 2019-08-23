@@ -38,15 +38,15 @@ stages:
     dependsOn: 
     - build_mvc
     - build_spa
-    displayName: "Build SPA"
+    displayName: "Publish Artifacts"
     pool: 
       vmImage: $(poolImage)
     steps:
-    - script: |
-        npm install
-        npm run build
-      displayName: 'npm run build'
-      workingDirectory: ./spa/$(spaName)
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
 # - stage: deploy
 #   displayName: "Deploy"
 #   dependsOn: build
