@@ -37,7 +37,7 @@ stages:
         echo "creating the spa folder on artifacts staging directory"
         mkdir -p $(Build.ArtifactStagingDirectory)/spa
         echo "copying files to artifacts staging directory"
-        cp -v -R ./* $(Build.ArtifactStagingDirectory)/spa
+        cp -vR * $(Build.ArtifactStagingDirectory)/spa
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
   - job: publish_artifacts
