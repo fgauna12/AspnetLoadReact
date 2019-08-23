@@ -29,6 +29,7 @@ stages:
       vmImage: $(poolImage)
     steps:
     - script: |
+        npm install
         npm run build
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
