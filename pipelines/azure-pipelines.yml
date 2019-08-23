@@ -35,6 +35,9 @@ stages:
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
   - job: publish_artifacts
+    dependsOn: 
+    - build_mvc
+    - build_spa
     displayName: "Build SPA"
     pool: 
       vmImage: $(poolImage)
