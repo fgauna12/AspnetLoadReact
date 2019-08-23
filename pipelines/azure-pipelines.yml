@@ -41,7 +41,19 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
     
-# - stage: deploy
-#   displayName: "Deploy"
-#   dependsOn: build
-#   jobs: []
+- stage: deploy
+  displayName: "Deploy"
+  dependsOn: build_all
+  jobs: 
+  - job: deploy_azure
+    displayName: "Deploy to CDN"
+    pool:
+      vmImage: $(poolImage)
+    steps: 
+    - script: echo deploying to cdn
+  - job: deploy_webapp
+    displayName: "Deploy to Website"
+    pool:
+      vmImage: $(poolImage)
+    steps: 
+    - script: echo deploying to webapp
