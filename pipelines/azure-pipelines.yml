@@ -23,13 +23,13 @@ stages:
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: 'dotnet build $(buildConfiguration)'
       workingDirectory: ./mvc
-  - job: build_mvc
-    displayName: "Build MVC"
+  - job: build_spa
+    displayName: "Build spa"
     pool: 
       vmImage: $(poolImage)
     steps:
-    - script: dotnet build --configuration $(buildConfiguration)
-      displayName: 'dotnet build $(buildConfiguration)'
+    - script: npm run build
+      displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
 - stage: deploy
   displayName: "Deploy"
