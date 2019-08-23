@@ -20,10 +20,21 @@ stages:
     pool: 
       vmImage: $(poolImage)
     steps:
-    - script: dotnet build --configuration $(buildConfiguration)
+    - script: dotnet build --configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/mvc
       displayName: 'dotnet build $(buildConfiguration)'
       workingDirectory: ./mvc
   - job: build_spa
+    displayName: "Build SPA"
+    pool: 
+      vmImage: $(poolImage)
+    steps:
+    - script: |
+        npm install
+        npm run build
+        cp /build/ $(Build.ArtifactStagingDirectory)/spa
+      displayName: 'npm run build'
+      workingDirectory: ./spa/$(spaName)
+  - job: publish_artifacts
     displayName: "Build SPA"
     pool: 
       vmImage: $(poolImage)
