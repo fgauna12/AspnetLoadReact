@@ -28,9 +28,11 @@ stages:
     pool: 
       vmImage: $(poolImage)
     steps:
-    - script: npm run build
+    - script: |
+        cd sample-app
+        npm run build
       displayName: 'npm run build'
-      workingDirectory: ./spa/$(spaName)
+      workingDirectory: ./spa
 # - stage: deploy
 #   displayName: "Deploy"
 #   dependsOn: build
