@@ -23,11 +23,6 @@ stages:
     - script: dotnet build --configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/mvc
       displayName: 'dotnet build $(buildConfiguration)'
       workingDirectory: ./mvc
-  - job: build_spa
-    displayName: "Build SPA"
-    pool: 
-      vmImage: $(poolImage)
-    steps:
     - script: |
         echo "installing NPM packages and building"
         npm install
@@ -40,19 +35,12 @@ stages:
         cp -vR * $(Build.ArtifactStagingDirectory)/spa
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
-  - job: publish_artifacts
-    dependsOn: 
-    - build_mvc
-    - build_spa
-    displayName: "Publish Artifacts"
-    pool: 
-      vmImage: $(poolImage)
-    steps:
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
+    
 # - stage: deploy
 #   displayName: "Deploy"
 #   dependsOn: build
