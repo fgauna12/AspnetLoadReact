@@ -31,7 +31,8 @@ stages:
     - script: |
         npm install
         npm run build
-        cp ./build/ $(Build.ArtifactStagingDirectory)/spa
+        cd build 
+        cp -R ./. $(Build.ArtifactStagingDirectory)/spa
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
   - job: publish_artifacts
