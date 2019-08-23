@@ -15,8 +15,8 @@ stages:
 - stage: build
   displayName: "Build"
   jobs: 
-  - job: build_mvc
-    displayName: "Build MVC"
+  - job: build_all
+    displayName: "Build"
     pool: 
       vmImage: $(poolImage)
     steps:
