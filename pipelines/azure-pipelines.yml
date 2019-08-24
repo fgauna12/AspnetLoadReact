@@ -9,7 +9,6 @@ trigger:
 variables:
   buildConfiguration: 'Release'
   spaName: sample-spa
-  poolImage: 'ubuntu-latest'
   azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
 
 stages: 
@@ -19,7 +18,7 @@ stages:
   - job: job_build_all
     displayName: "Build MVC & SPA"
     pool: 
-      vmImage: $(poolImage)
+      vmImage: 'ubuntu-latest'
     steps:
     - script: dotnet build --configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/mvc
       displayName: 'dotnet build $(buildConfiguration)'
@@ -45,17 +44,20 @@ stages:
         publishLocation: 'Container'
     
 - stage: stage_deploy_dev
-  displayName: "Deploy to $(environment)"
+  displayName: "Deploy to dev"
   dependsOn: stage_build
   variables:
     environment: dev
     spaNameNoDashes: sampleapp
+    blobStorageName: devsampleapp01
+    cdnEndpointName: endpoint-sampleapp
+    cdnProfileName: sampleapp-profile
     resourceGroup: $(environment)-$(spaNameNoDashes)-rg
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
     pool:
-      vmImage: $(poolImage)
+      vmImage: 'windows-latest'
     steps: 
     - download: current
       artifact: drop
@@ -70,6 +72,24 @@ stages:
         csmFile: '$(Pipeline.Workspace)/drop/arm/cdn-blob.json'
         overrideParameters: '-environment $(environment) -appName $(spaNameNoDashes)'
         deploymentMode: 'Incremental'
+    - task: AzureFileCopy@2
+      displayName: 'AzureBlob File Copy'
+      inputs:
+        sourcePath: '$(System.DefaultWorkingDirectory)/_Docs.AutomatedTestingWorkshop/_site'
+        azureSubscription: $(azureServiceEndpoint)
+        destination: AzureBlob
+        storage: $(blobStorageName)
+        containerName: '$web'
+    - task: fabienlavocat.FabienLavocat-PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint@2
+      displayName: 'Purge Azure CDN Endpoint'
+      inputs:
+        connectedServiceNameSelector: ConnectedServiceNameARM
+        connectedServiceNameARM: $(azureServiceEndpoint)
+        resourceGroupName: $(resourceGroup)
+        endpointName: $(cdnEndpointName)
+        profileName: $(cdnProfileName)
+        purgeContent: /
+
   - job: deploy_webapp
     dependsOn: job_deploy_azure
     displayName: "Deploy to Website"
