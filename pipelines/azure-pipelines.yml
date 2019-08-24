@@ -50,6 +50,7 @@ stages:
   variables:
     environment: dev
     spaNameNoDashes: sampleapp
+    blobStorageName: devsampleapp01
     resourceGroup: $(environment)-$(spaNameNoDashes)-rg
   jobs: 
   - job: job_deploy_azure
@@ -70,6 +71,15 @@ stages:
         csmFile: '$(Pipeline.Workspace)/drop/arm/cdn-blob.json'
         overrideParameters: '-environment $(environment) -appName $(spaNameNoDashes)'
         deploymentMode: 'Incremental'
+    - task: AzureFileCopy@2
+      displayName: 'AzureBlob File Copy'
+      inputs:
+        sourcePath: '$(System.DefaultWorkingDirectory)/_Docs.AutomatedTestingWorkshop/_site'
+        azureSubscription: $(azureSubscription)
+        destination: AzureBlob
+        storage: $(blobStorageName)
+        containerName: '$web'
+
   - job: deploy_webapp
     dependsOn: job_deploy_azure
     displayName: "Deploy to Website"
