@@ -12,10 +12,10 @@ variables:
   poolImage: 'ubuntu-latest'
 
 stages: 
-- stage: build
+- stage: stage_build
   displayName: "Build"
   jobs: 
-  - job: build_all
+  - job: job_build_all
     displayName: "Build"
     pool: 
       vmImage: $(poolImage)
@@ -41,11 +41,11 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
     
-- stage: deploy
+- stage: stage_build
   displayName: "Deploy"
   dependsOn: build_all
   jobs: 
-  - job: deploy_azure
+  - job: job_deploy_azure
     displayName: "Deploy to CDN"
     pool:
       vmImage: $(poolImage)
