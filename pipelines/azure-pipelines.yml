@@ -10,6 +10,7 @@ variables:
   buildConfiguration: 'Release'
   spaName: sample-spa
   poolImage: 'ubuntu-latest'
+  azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
 
 stages: 
 - stage: stage_build
@@ -49,7 +50,6 @@ stages:
     environment: dev
     spaNameNoDashes: sampleapp
     resourceGroup: $(environment)-$(spaNameNoDashes)-rg
-    azureSubscription: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
@@ -59,7 +59,7 @@ stages:
     - task: AzureResourceGroupDeployment@2
       displayName: Deploy ARM Template to Create CDN
       inputs:
-        azureSubscription: $(azureSubscription)
+        azureSubscription: $(azureServiceEndpoint)
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceGroup)
         location: 'East US'
