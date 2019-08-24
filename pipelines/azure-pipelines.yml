@@ -10,13 +10,14 @@ variables:
   buildConfiguration: 'Release'
   spaName: sample-spa
   poolImage: 'ubuntu-latest'
+  azureSubscription: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
 
 stages: 
 - stage: stage_build
   displayName: "Build"
   jobs: 
   - job: job_build_all
-    displayName: "Build"
+    displayName: "Build MVC & SPA"
     pool: 
       vmImage: $(poolImage)
     steps:
@@ -35,22 +36,36 @@ stages:
         cp -vR * $(Build.ArtifactStagingDirectory)/spa
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
+    - script: cp -vR ./arm/* $(Build.ArtifactStagingDirectory)/arm
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
     
-- stage: stage_deploy
-  displayName: "Deploy"
+- stage: stage_deploy_dev
+  displayName: "Deploy to DEV"
   dependsOn: stage_build
+  variables:
+    environment: dev
+    spaNameNoDashes: sampleapp
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
     pool:
       vmImage: $(poolImage)
     steps: 
-    - script: echo deploying to cdn
+    - task: AzureResourceGroupDeployment@2
+      displayName: Deploy ARM Template to Create CDN
+      inputs:
+        azureSubscription: $(azureSubscription)
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: 'dev-sampleapp-rg'
+        location: 'East US'
+        templateLocation: 'Linked artifact'
+        csmFile: 'arm/cdn-blob.json'
+        overrideParameters: 'environment=$(environment),appName=$(spaNameNoDashes)'
+        deploymentMode: 'Incremental'
   - job: deploy_webapp
     displayName: "Deploy to Website"
     pool:
