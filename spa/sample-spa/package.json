@@ -17,6 +17,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "homepage": "https://devsampleapp01.blob.core.windows.net/sampleapp",
   "browserslist": {
     "production": [
       ">0.2%",
