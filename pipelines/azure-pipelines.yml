@@ -9,7 +9,6 @@ trigger:
 variables:
   buildConfiguration: 'Release'
   spaName: sample-spa
-  poolImage: 'ubuntu-latest'
   azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
 
 stages: 
@@ -19,7 +18,7 @@ stages:
   - job: job_build_all
     displayName: "Build MVC & SPA"
     pool: 
-      vmImage: $(poolImage)
+      vmImage: 'ubuntu-latest'
     steps:
     - script: dotnet build --configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/mvc
       displayName: 'dotnet build $(buildConfiguration)'
@@ -58,7 +57,7 @@ stages:
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
     pool:
-      vmImage: $(poolImage)
+      vmImage: 'windows-latest'
     steps: 
     - download: current
       artifact: drop
