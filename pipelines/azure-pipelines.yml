@@ -75,7 +75,7 @@ stages:
     - task: AzureFileCopy@2
       displayName: 'AzureBlob File Copy'
       inputs:
-        sourcePath: '$(System.DefaultWorkingDirectory)/_Docs.AutomatedTestingWorkshop/_site'
+        sourcePath: '$(Pipeline.Workspace)/drop/spa'
         azureSubscription: $(azureServiceEndpoint)
         destination: AzureBlob
         storage: $(blobStorageName)
