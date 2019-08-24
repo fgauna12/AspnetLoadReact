@@ -79,7 +79,7 @@ stages:
         azureSubscription: $(azureServiceEndpoint)
         destination: AzureBlob
         storage: $(blobStorageName)
-        containerName: '$web'
+        containerName: '$(spaNameNoDashes)'
     - task: fabienlavocat.FabienLavocat-PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint@2
       displayName: 'Purge Azure CDN Endpoint'
       inputs:
