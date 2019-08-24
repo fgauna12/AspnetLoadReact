@@ -36,7 +36,9 @@ stages:
         cp -vR * $(Build.ArtifactStagingDirectory)/spa
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
-    - script: cp -vR ./arm/* $(Build.ArtifactStagingDirectory)/arm
+    - script: cp -vR * $(Build.ArtifactStagingDirectory)/arm
+      displayName: "Copying arm templates to artifacts staging directory"
+      workingDirectory: ./arm
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -68,6 +70,7 @@ stages:
         overrideParameters: 'environment=$(environment),appName=$(spaNameNoDashes)'
         deploymentMode: 'Incremental'
   - job: deploy_webapp
+    dependsOn: job_deploy_azure
     displayName: "Deploy to Website"
     pool:
       vmImage: $(poolImage)
