@@ -40,7 +40,20 @@
         "sku": {
           "name": "Standard_LRS"
         },
-        "properties": {}
+        "properties": {},
+        "resources": [
+          {
+            "name": "[parameters('appName')]",
+            "type": "blobServices/containers",
+            "apiVersion": "2018-07-01",
+            "properties":{
+              "publicAccess": "string"
+            },
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ]
+          }
+        ]
       },
       {
         "name": "[variables('profileName')]",
