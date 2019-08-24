@@ -41,9 +41,9 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
     
-- stage: stage_build
+- stage: stage_deploy
   displayName: "Deploy"
-  dependsOn: build_all
+  dependsOn: stage_build
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
