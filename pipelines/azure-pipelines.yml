@@ -9,6 +9,7 @@ trigger:
 variables:
   buildConfiguration: 'Release'
   spaName: sample-spa
+  azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
 
 stages: 
 - stage: stage_build
