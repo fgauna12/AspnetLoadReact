@@ -67,7 +67,7 @@ stages:
         resourceGroupName: $(resourceGroup)
         location: 'East US'
         templateLocation: 'Linked artifact'
-        csmFile: 'arm/cdn-blob.json'
+        csmFile: '$(Pipeline.Workspace)/arm/cdn-blob.json'
         overrideParameters: 'environment=$(environment),appName=$(spaNameNoDashes)'
         deploymentMode: 'Incremental'
   - job: deploy_webapp
