@@ -94,6 +94,6 @@ stages:
     dependsOn: job_deploy_azure
     displayName: "Deploy to Website"
     pool:
-      vmImage: $(poolImage)
+      vmImage: 'windows-latest'
     steps: 
     - script: echo deploying to webapp
