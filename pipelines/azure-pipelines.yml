@@ -75,7 +75,7 @@ stages:
       displayName: 'AzureBlob File Copy'
       inputs:
         sourcePath: '$(System.DefaultWorkingDirectory)/_Docs.AutomatedTestingWorkshop/_site'
-        azureSubscription: $(azureSubscription)
+        azureSubscription: $(azureServiceEndpoint)
         destination: AzureBlob
         storage: $(blobStorageName)
         containerName: '$web'
