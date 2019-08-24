@@ -23,7 +23,7 @@
       }
     },
     "variables": {
-      "storageAccountName": "[concat(parameters('environment'), parameters('appName'), 'stor')]",
+      "storageAccountName": "[concat(parameters('environment'), parameters('appName'), '01')]",
       "endpointName": "[concat('endpoint-', parameters('appName'))]",
       "profileName": "[concat(parameters('appName'), '-profile')]"
     },
