@@ -51,6 +51,8 @@ stages:
     environment: dev
     spaNameNoDashes: sampleapp
     blobStorageName: devsampleapp01
+    cdnEndpointName: endpoint-sampleapp
+    cdnProfileName: sampleapp-profile
     resourceGroup: $(environment)-$(spaNameNoDashes)-rg
   jobs: 
   - job: job_deploy_azure
@@ -79,6 +81,15 @@ stages:
         destination: AzureBlob
         storage: $(blobStorageName)
         containerName: '$web'
+    - task: fabienlavocat.FabienLavocat-PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint@2
+      displayName: 'Purge Azure CDN Endpoint'
+      inputs:
+        connectedServiceNameSelector: ConnectedServiceNameARM
+        connectedServiceNameARM: $(azureServiceEndpoint)
+        resourceGroupName: $(resourceGroup)
+        endpointName: $(cdnEndpointName)
+        profileName: $(cdnProfileName)
+        purgeContent: /
 
   - job: deploy_webapp
     dependsOn: job_deploy_azure
