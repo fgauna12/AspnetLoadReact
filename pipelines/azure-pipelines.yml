@@ -68,7 +68,7 @@ stages:
         location: 'East US'
         templateLocation: 'Linked artifact'
         csmFile: '$(Pipeline.Workspace)/drop/arm/cdn-blob.json'
-        overrideParameters: 'environment=$(environment),appName=$(spaNameNoDashes)'
+        overrideParameters: '-environment $(environment) -appName $(spaNameNoDashes)'
         deploymentMode: 'Incremental'
   - job: deploy_webapp
     dependsOn: job_deploy_azure
