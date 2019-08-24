@@ -47,7 +47,7 @@
             "type": "blobServices/containers",
             "apiVersion": "2018-07-01",
             "properties":{
-              "publicAccess": "string"
+              "publicAccess": "Container"
             },
             "dependsOn": [
                 "[variables('storageAccountName')]"
