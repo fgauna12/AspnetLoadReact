@@ -25,7 +25,8 @@
     "variables": {
       "storageAccountName": "[concat(parameters('environment'), parameters('appName'), '01')]",
       "endpointName": "[concat('endpoint-', parameters('appName'))]",
-      "profileName": "[concat(parameters('appName'), '-profile')]"
+      "profileName": "[concat(parameters('appName'), '-profile')]",
+      "containerName": "[parameters('appName')]"
     },
     "resources": [
       {
@@ -43,7 +44,7 @@
         "properties": {},
         "resources": [
           {
-            "name": "[parameters('appName')]",
+            "name": "[concat('default/', variables('containerName'))]",
             "type": "blobServices/containers",
             "apiVersion": "2018-07-01",
             "properties":{
