@@ -10,7 +10,6 @@ variables:
   buildConfiguration: 'Release'
   spaName: sample-spa
   poolImage: 'ubuntu-latest'
-  azureSubscription: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
 
 stages: 
 - stage: stage_build
@@ -49,6 +48,8 @@ stages:
   variables:
     environment: dev
     spaNameNoDashes: sampleapp
+    resourceGroup: $(environment)-$(spaNameNoDashes)-rg
+    azureSubscription: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
@@ -60,7 +61,7 @@ stages:
       inputs:
         azureSubscription: $(azureSubscription)
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'dev-sampleapp-rg'
+        resourceGroupName: $(resourceGroup)
         location: 'East US'
         templateLocation: 'Linked artifact'
         csmFile: 'arm/cdn-blob.json'
