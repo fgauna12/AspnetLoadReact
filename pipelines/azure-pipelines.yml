@@ -36,9 +36,8 @@ stages:
         cp -vR * $(Build.ArtifactStagingDirectory)/spa
       displayName: 'npm run build'
       workingDirectory: ./spa/$(spaName)
-    - script: cp -vR * $(Build.ArtifactStagingDirectory)/arm/
+    - script: cp -vR ./arm $(Build.ArtifactStagingDirectory)/arm
       displayName: "Copying arm templates to artifacts staging directory"
-      workingDirectory: ./arm
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
