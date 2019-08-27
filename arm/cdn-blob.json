@@ -113,15 +113,15 @@
           "type" : "string",
           "value": "[variables('storageAccountName')]"
       },
-      "containerName": : {
+      "containerName": {
           "type" : "string",
           "value": "[variables('containerName')]"
       },
-      "profileName": : {
+      "profileName": {
           "type" : "string",
           "value": "[variables('profileName')]"
       },
-      "endpointName": : {
+      "endpointName": {
           "type" : "string",
           "value": "[variables('endpointName')]"
       },
