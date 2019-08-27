@@ -101,7 +101,7 @@ stages:
           }
         }
 
-        Convert-ArmOutputToPsObject -ArmOutputString $(ArmOutputAsString)
+        Convert-ArmOutputToPsObject -ArmOutputString '$(ArmOutputAsString)'
     - task: AzureFileCopy@2
       displayName: 'AzureBlob File Copy'
       inputs:
