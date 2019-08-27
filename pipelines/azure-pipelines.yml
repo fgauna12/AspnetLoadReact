@@ -83,6 +83,7 @@ stages:
           )
 
           if ($PSBoundParameters['Verbose']) {
+            Write-Host "Arm output json is:"
             Write-Host $ArmOutputString
           }
 
@@ -95,7 +96,7 @@ stages:
 
               if ($type -eq "securestring") {
                   Write-Host "##vso[task.setvariable variable=$keyname;issecret=true]$value"
-                  Write-Host "Added Azure DevOps variable '$keyname' ('$type')"
+                  Write-Host "Added Azure DevOps secret variable '$keyname' ('$type')"
               } elseif ($type -eq "string") {
                   Write-Host "##vso[task.setvariable variable=$keyname]$value"
                   Write-Host "Added Azure DevOps variable '$keyname' ('$type') with value '$value'"
@@ -106,6 +107,7 @@ stages:
         }
 
         Convert-ArmOutputToPsObject -ArmOutputString '$(ArmOutputAsString)' -Verbose
+      displayName: "Parsing outputs from ARM deployment to pipeline variables"
     - task: AzureFileCopy@2
       displayName: 'AzureBlob File Copy'
       inputs:
