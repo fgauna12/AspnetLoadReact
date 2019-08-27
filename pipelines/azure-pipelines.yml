@@ -44,7 +44,7 @@ stages:
         publishLocation: 'Container'
     
 - stage: stage_deploy_dev
-  displayName: "Deploy to dev"
+  displayName: "Development"
   dependsOn: stage_build
   variables:
     environment: dev
