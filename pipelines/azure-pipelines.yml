@@ -8,7 +8,8 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
-  spaName: sample-spa
+  spaName: samplespa
+  appName: sampleapp
   azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
 
 stages: 
@@ -48,9 +49,8 @@ stages:
   dependsOn: stage_build
   variables:
     environment: dev
-    spaNameNoDashes: sampleapp
     azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
-    resourceGroup: rg-$(spaNameNoDashes)-$(environment)-001
+    resourceGroup: rg-$(spaName)-$(environment)-001
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
@@ -68,7 +68,7 @@ stages:
         location: 'East US'
         templateLocation: 'Linked artifact'
         csmFile: '$(Pipeline.Workspace)/drop/arm/cdn-blob.json'
-        overrideParameters: '-environment $(environment) -appName $(spaNameNoDashes)'
+        overrideParameters: '-environment $(environment) -appName $(spaName)'
         deploymentMode: 'Incremental'
         deploymentOutputs: 'ArmOutputAsString'
     - powershell: |
@@ -112,7 +112,7 @@ stages:
         azureSubscription: $(azureServiceEndpoint)
         destination: AzureBlob
         storage: $(ArmOutputs.storageAccountName)
-        containerName: '$(spaNameNoDashes)'
+        containerName: '$(spaName)'
     - task: fabienlavocat.FabienLavocat-PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint@2
       displayName: 'Purge Azure CDN Endpoint'
       inputs:
@@ -125,8 +125,54 @@ stages:
 
   - job: deploy_webapp
     dependsOn: job_deploy_azure
-    displayName: "Deploy to Website"
+    displayName: "Deploy to Webapp"
     pool:
       vmImage: 'windows-latest'
     steps: 
-    - script: echo deploying to webapp
+    - task: AzureResourceGroupDeployment@2
+      displayName: Deploy ARM Template to Create CDN
+      inputs:
+        azureSubscription: $(azureServiceEndpoint)
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(resourceGroup)
+        location: 'East US'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(Pipeline.Workspace)/drop/arm/webapp.json'
+        overrideParameters: '-environment $(environment) -appName $(appName)'
+        deploymentMode: 'Incremental'
+        deploymentOutputs: 'ArmOutputAsString'
+    - powershell: |
+        function Convert-ArmOutputToPsObject {
+          param (
+            [Parameter(Mandatory=$true)]
+            [string]
+            $ArmOutputString
+          )
+
+          if ($PSBoundParameters['Verbose']) {
+            Write-Host "Arm output json is:"
+            Write-Host $ArmOutputString
+          }
+
+          $armOutputObj = $ArmOutputString | ConvertFrom-Json
+
+          $armOutputObj.PSObject.Properties | ForEach-Object {
+              $type = ($_.value.type).ToLower()
+              $keyname = "ArmOutputs.$($_.name)"
+              $value = $_.value.value
+
+              if ($type -eq "securestring") {
+                  Write-Host "##vso[task.setvariable variable=$keyname;issecret=true]$value"
+                  Write-Host "Added Azure DevOps secret variable '$keyname' ('$type')"
+              } elseif ($type -eq "string") {
+                  Write-Host "##vso[task.setvariable variable=$keyname]$value"
+                  Write-Host "Added Azure DevOps variable '$keyname' ('$type') with value '$value'"
+              } else {
+                  Throw "Type '$type' is not supported for '$keyname'"
+              }
+          }
+        }
+
+        Convert-ArmOutputToPsObject -ArmOutputString '$(ArmOutputAsString)' -Verbose
+      displayName: "Parsing outputs from ARM deployment to pipeline variables"
+      
