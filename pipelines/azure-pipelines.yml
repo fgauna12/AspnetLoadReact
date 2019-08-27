@@ -183,6 +183,6 @@ stages:
         azureSubscription: $(azureServiceEndpoint)
         appType: 'webApp'
         appName: '$(ArmOutputs.webAppName)'
-        package: '$(System.DefaultWorkingDirectory)/drop/mvc/**/*.zip'
+        package: '$(System.DefaultWorkingDirectory)/drop/mvc/**/*'
         appSettings: '-AppSettingKey AppSettingValue'
         deploymentMethod: 'auto'
