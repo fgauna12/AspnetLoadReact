@@ -49,11 +49,8 @@ stages:
   variables:
     environment: dev
     spaNameNoDashes: sampleapp
-    blobStorageName: devsampleapp01
-    cdnEndpointName: endpoint-sampleapp
-    cdnProfileName: sampleapp-profile
     azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
-    resourceGroup: $(environment)-$(spaNameNoDashes)-rg
+    resourceGroup: rg-$(spaNameNoDashes)-$(environment)-001
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
@@ -87,11 +84,11 @@ stages:
             Write-Host $ArmOutputString
           }
 
-          $armOutputObj = $ArmOutputString | ConvertFrom-json
+          $armOutputObj = $ArmOutputString | ConvertFrom-Json
 
           $armOutputObj.PSObject.Properties | ForEach-Object {
               $type = ($_.value.type).ToLower()
-              $keyname = $_.name
+              $keyname = "ArmOutputs.$($_.name)"
               $value = $_.value.value
 
               if ($type -eq "securestring") {
@@ -114,7 +111,7 @@ stages:
         sourcePath: '$(Pipeline.Workspace)/drop/spa'
         azureSubscription: $(azureServiceEndpoint)
         destination: AzureBlob
-        storage: $(blobStorageName)
+        storage: $(ArmOutputs.storageAccountName)
         containerName: '$(spaNameNoDashes)'
     - task: fabienlavocat.FabienLavocat-PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint.PurgeAzureCDNEndpoint@2
       displayName: 'Purge Azure CDN Endpoint'
@@ -122,8 +119,8 @@ stages:
         connectedServiceNameSelector: ConnectedServiceNameARM
         connectedServiceNameARM: $(azureServiceEndpoint)
         resourceGroupName: $(resourceGroup)
-        endpointName: $(cdnEndpointName)
-        profileName: $(cdnProfileName)
+        endpointName: $(ArmOutputs.endpointName)
+        profileName: $(ArmOutputs.profileName)
         purgeContent: /
 
   - job: deploy_webapp
