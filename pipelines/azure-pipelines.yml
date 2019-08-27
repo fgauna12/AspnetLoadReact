@@ -73,6 +73,35 @@ stages:
         csmFile: '$(Pipeline.Workspace)/drop/arm/cdn-blob.json'
         overrideParameters: '-environment $(environment) -appName $(spaNameNoDashes)'
         deploymentMode: 'Incremental'
+        outputVariable: 'ArmOutputAsString'
+    - powershell: |
+        function Convert-ArmOutputToPsObject {
+          param (
+            [Parameter(Mandatory=$true)]
+            [string]
+            $ArmOutputString
+          )
+
+          $armOutputObj = $ArmOutputString | ConvertFrom-json
+
+          $armOutputObj.PSObject.Properties | ForEach-Object {
+              $type = ($_.value.type).ToLower()
+              $keyname = $_.name
+              $value = $_.value.value
+
+              if ($type -eq "securestring") {
+                  Write-Host "##vso[task.setvariable variable=$keyname;issecret=true]$value"
+                  Write-Host "Added Azure DevOps variable '$keyname' ('$type')"
+              } elseif ($type -eq "string") {
+                  Write-Host "##vso[task.setvariable variable=$keyname]$value"
+                  Write-Host "Added Azure DevOps variable '$keyname' ('$type') with value '$value'"
+              } else {
+                  Throw "Type '$type' is not supported for '$keyname'"
+              }
+          }
+        }
+
+        Convert-ArmOutputToPsObject -ArmOutputString $(ArmOutputAsString)
     - task: AzureFileCopy@2
       displayName: 'AzureBlob File Copy'
       inputs:
