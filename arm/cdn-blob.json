@@ -23,10 +23,11 @@
       }
     },
     "variables": {
-      "storageAccountName": "[concat(parameters('environment'), parameters('appName'), '01')]",
-      "endpointName": "[concat('endpoint-', parameters('appName'))]",
-      "profileName": "[concat(parameters('appName'), '-profile')]",
-      "containerName": "[parameters('appName')]"
+      "appName": "[toLower(replace(parameters('appName'), '-', ''))],
+      "storageAccountName": "[concat('st', variables('appName'), toLower(parameters('environment')), '01')]",
+      "endpointName": "[concat('cdnep-', variables('appName')))]",
+      "profileName": "[concat('cdnprofile-', variables('appName'), '-', toLower(parameters('environment')))]",
+      "containerName": "[variables('appName')]"
     },
     "resources": [
       {
@@ -108,6 +109,22 @@
       }
     ],
     "outputs": {
+      "storageAccountName": {
+          "type" : "string",
+          "value": "[variables('storageAccountName')]"
+      },
+      "containerName": : {
+          "type" : "string",
+          "value": "[variables('containerName')]"
+      },
+      "profileName": : {
+          "type" : "string",
+          "value": "[variables('profileName')]"
+      },
+      "endpointName": : {
+          "type" : "string",
+          "value": "[variables('endpointName')]"
+      },
       "hostName": {
         "type": "string",
         "value": "[reference(variables('endpointName')).hostName]"
