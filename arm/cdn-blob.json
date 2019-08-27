@@ -25,7 +25,7 @@
     "variables": {
       "appName": "[toLower(replace(parameters('appName'), '-', ''))]",
       "storageAccountName": "[concat('st', variables('appName'), toLower(parameters('environment')), '01')]",
-      "endpointName": "[concat('cdnep-', variables('appName')))]",
+      "endpointName": "[concat('cdnep-', variables('appName'))]",
       "profileName": "[concat('cdnprofile-', variables('appName'), '-', toLower(parameters('environment')))]",
       "containerName": "[variables('appName')]"
     },
