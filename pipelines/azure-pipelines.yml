@@ -129,6 +129,8 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps: 
+    - download: current
+      artifact: drop
     - task: AzureResourceGroupDeployment@2
       displayName: Deploy ARM Template to Create CDN
       inputs:
