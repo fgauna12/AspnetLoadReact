@@ -25,8 +25,8 @@
     "variables": {
       "environment": "[toLower(parameters('environment'))]",
       "appName": "[toLower(replace(parameters('appName'), '-', ''))]",
-      "webAppName": "[concat('azapp-', variables('appName'), variables('environment'), '-001')]",
-      "appServicePlanName": "[concat('sp-', variables('appName'), variables('environment'), '-001')]"
+      "webAppName": "[concat('azapp-', variables('appName'), '-', variables('environment'), '-001')]",
+      "appServicePlanName": "[concat('sp-', variables('appName'), '-', variables('environment'), '-001')]"
     },
     "resources": [
       {

@@ -50,7 +50,7 @@ stages:
   variables:
     environment: dev
     azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
-    resourceGroup: rg-$(spaName)-$(environment)-001
+    resourceGroup: rg-$(appName)-$(environment)-001
   jobs: 
   - job: job_deploy_azure
     displayName: "Deploy to CDN"
