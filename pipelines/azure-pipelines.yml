@@ -175,4 +175,12 @@ stages:
 
         Convert-ArmOutputToPsObject -ArmOutputString '$(ArmOutputAsString)' -Verbose
       displayName: "Parsing outputs from ARM deployment to pipeline variables"
-      
+    - task: AzureWebApp@1
+      displayName: Deploy to Azure Web App (Windows)
+      inputs:
+        azureSubscription: $(azureServiceEndpoint)
+        appType: 'webApp'
+        appName: '$(ArmOutputs.webAppName)'
+        package: '$(System.DefaultWorkingDirectory)/drop/mvc/**/*.zip'
+        appSettings: '-AppSettingKey AppSettingValue'
+        deploymentMethod: 'auto'
