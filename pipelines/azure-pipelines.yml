@@ -73,7 +73,7 @@ stages:
         csmFile: '$(Pipeline.Workspace)/drop/arm/cdn-blob.json'
         overrideParameters: '-environment $(environment) -appName $(spaNameNoDashes)'
         deploymentMode: 'Incremental'
-        outputVariable: 'ArmOutputAsString'
+        deploymentOutputs: 'ArmOutputAsString'
     - powershell: |
         function Convert-ArmOutputToPsObject {
           param (
@@ -81,6 +81,10 @@ stages:
             [string]
             $ArmOutputString
           )
+
+          if ($PSBoundParameters['Verbose']) {
+            Write-Host $ArmOutputString
+          }
 
           $armOutputObj = $ArmOutputString | ConvertFrom-json
 
@@ -101,7 +105,7 @@ stages:
           }
         }
 
-        Convert-ArmOutputToPsObject -ArmOutputString '$(ArmOutputAsString)'
+        Convert-ArmOutputToPsObject -ArmOutputString '$(ArmOutputAsString)' -Verbose
     - task: AzureFileCopy@2
       displayName: 'AzureBlob File Copy'
       inputs:
