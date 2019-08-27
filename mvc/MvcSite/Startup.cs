@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LaunchDarkly.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,10 @@ namespace MvcSite
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            var launchDarkly = new LdClient(Configuration["LaunchDarkly:Key"]);
+
+            services.AddSingleton<ILdClient>(launchDarkly);
+            services.AddOptions<SampleAppOptions>(Configuration.GetSection("SampleApp").Value);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
