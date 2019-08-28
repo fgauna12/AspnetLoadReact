@@ -26,6 +26,7 @@ stages:
       workingDirectory: ./mvc
     - script: |
         echo 'Zipping up the mvc outputs to the staging directory'
+        mkdir $(Build.ArtifactStagingDirectory)/mvc
         zip -r $(Build.ArtifactStagingDirectory)/mvc/mvc.zip mvc/
       workingDirectory: $(Agent.TempDirectory)
     - script: |
