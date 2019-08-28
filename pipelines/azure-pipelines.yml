@@ -21,20 +21,12 @@ stages:
     pool: 
       vmImage: 'ubuntu-latest'
     steps:
-    # - script: dotnet publish --configuration $(buildConfiguration) -o $(Agent.TempDirectory)/mvc
-    #   displayName: 'dotnet publish $(buildConfiguration)'
-    #   workingDirectory: ./mvc
     - task: DotNetCoreCLI@2
       inputs:
         command: 'publish'
         publishWebProjects: true
         arguments: --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/mvc
         workingDirectory: './mvc'
-    # - script: |
-    #     echo 'Zipping up the mvc outputs to the staging directory'
-    #     mkdir -p $(Build.ArtifactStagingDirectory)/mvc 
-    #     zip -r $(Build.ArtifactStagingDirectory)/mvc/mvc.zip *
-    #   workingDirectory: $(Agent.TempDirectory)/mvc
     - script: |
         echo "installing NPM packages and building"
         npm install
@@ -63,7 +55,7 @@ stages:
     azureServiceEndpoint: 'Nebbia - Partner Network(1979771a-9163-4750-8947-e6dbe596a8d7)'
     resourceGroup: rg-$(appName)-$(environment)-001
   jobs: 
-  - job: job_deploy_azure
+  - job: job_deploy_cdn
     displayName: "Deploy to CDN"
     pool:
       vmImage: 'windows-latest'
@@ -136,13 +128,13 @@ stages:
     - powershell: echo "##vso[task.setvariable variable=Exports.Cdn.hostName;isOutput=true]$(ArmOutputs.hostName)"
       displayName: "Export CDN Variable"
 
-  - job: deploy_webapp
-    dependsOn: job_deploy_azure
+  - job: job_deploy_webapp
+    dependsOn: job_deploy_cdn
     displayName: "Deploy to Webapp"
     pool:
       vmImage: 'windows-latest'
     variables:
-      ArmOutputs.hostName: $[ dependencies.stage_deploy_dev.outputs['Exports.Cdn.hostName'] ]
+      ArmOutputs.hostName: $[ dependencies.job_deploy_cdn.outputs['Exports.Cdn.hostName'] ]
     steps: 
     - download: current
       artifact: drop
