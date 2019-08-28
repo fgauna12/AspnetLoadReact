@@ -26,7 +26,7 @@ stages:
       workingDirectory: ./mvc
     - script: |
         echo 'Zipping up the mvc outputs to the staging directory'
-        mkdir $(Build.ArtifactStagingDirectory)/mvc
+        mkdir -p $(Build.ArtifactStagingDirectory)/mvc
         zip -r $(Build.ArtifactStagingDirectory)/mvc/mvc.zip mvc/
       workingDirectory: $(Agent.TempDirectory)
     - script: |
@@ -188,6 +188,6 @@ stages:
         azureSubscription: $(azureServiceEndpoint)
         appType: 'webApp'
         appName: '$(ArmOutputs.webAppName)'
-        package: '$(System.DefaultWorkingDirectory)/drop/mvc/*.zip'
+        package: '$(Pipeline.Workspace)/drop/mvc/*.zip'
         appSettings: '-AppSettingKey AppSettingValue'
         deploymentMethod: 'auto'
