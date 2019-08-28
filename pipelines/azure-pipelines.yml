@@ -209,7 +209,7 @@ stages:
         azureSubscription: $(azureServiceEndpoint)
         webAppName: '$(ArmOutputs.webAppName)'
         package: '$(Pipeline.Workspace)/drop/mvc/*.zip'
-        appSettings: '-ASPNETCORE_ENVIRONMENT Production -LaunchDarkly__Key $(LaunchDarkly.Key) -SampleApp__SpaUrl https://$(ArmOutputs.hostName)'
+        appSettings: '-ASPNETCORE_ENVIRONMENT Production -LaunchDarkly__Key $(LaunchDarkly.Key) -SampleApp__SpaUrl https://$(ArmOutputs.hostName)/samplespa/index.html'
         WebAppUri: webAppUrl
         takeAppOfflineFlag: true
         useWebDeploy: true
