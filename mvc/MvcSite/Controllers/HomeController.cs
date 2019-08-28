@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using LaunchDarkly.Client;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.Options;
 using MvcSite.Models;
 
@@ -23,7 +25,19 @@ namespace MvcSite.Controllers
         
         public IActionResult Index()
         {
-            var userId = Guid.NewGuid().ToString();
+            Request.Cookies.TryGetValue("sampleApp.userId", out string userId);
+            if (userId == null)
+            {
+                userId = Guid.NewGuid().ToString();
+                this.Response.Cookies.Append(
+                    "sampleApp.userId",
+                    userId,
+                    new Microsoft.AspNetCore.Http.CookieOptions()
+                    {
+                        Path = "/"
+                    }
+                );
+            }
             var user = LaunchDarkly.Client.User.WithKey(userId);
             if (_ldClient.BoolVariation("new-portal", user, false))
             {
