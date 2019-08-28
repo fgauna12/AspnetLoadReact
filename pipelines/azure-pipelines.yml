@@ -26,9 +26,9 @@ stages:
       workingDirectory: ./mvc
     - script: |
         echo 'Zipping up the mvc outputs to the staging directory'
-        mkdir -p $(Build.ArtifactStagingDirectory)/mvc
-        zip -r $(Build.ArtifactStagingDirectory)/mvc/mvc.zip mvc/
-      workingDirectory: $(Agent.TempDirectory)
+        mkdir -p $(Build.ArtifactStagingDirectory)/mvc 
+        zip -r $(Build.ArtifactStagingDirectory)/mvc/mvc.zip *
+      workingDirectory: $(Agent.TempDirectory)/mvc
     - script: |
         echo "installing NPM packages and building"
         npm install
@@ -137,7 +137,7 @@ stages:
     - download: current
       artifact: drop
     - task: AzureResourceGroupDeployment@2
-      displayName: Deploy ARM Template to Create CDN
+      displayName: Deploy ARM Template to Create Web App
       inputs:
         azureSubscription: $(azureServiceEndpoint)
         action: 'Create Or Update Resource Group'
