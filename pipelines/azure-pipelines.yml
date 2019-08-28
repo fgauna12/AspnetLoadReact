@@ -125,8 +125,10 @@ stages:
         endpointName: $(ArmOutputs.endpointName)
         profileName: $(ArmOutputs.profileName)
         purgeContent: /
-    - powershell: echo "##vso[task.setvariable variable=Exports.Cdn.hostName;isOutput=true]$(ArmOutputs.hostName)"
+    - powershell: echo "##vso[task.setvariable variable=cdn.hostName;isOutput=true]$(ArmOutputs.hostName)"
+      name: exportsStep
       displayName: "Export CDN Variable"
+    - powershell: echo $(exportsStep.cdn.hostName)
 
   - job: job_deploy_webapp
     dependsOn: job_deploy_cdn
@@ -134,7 +136,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     variables:
-      ArmOutputs.hostName: $[ dependencies.job_deploy_cdn.outputs['Exports.Cdn.hostName'] ]
+      ArmOutputs.hostName: $[ dependencies.job_deploy_cdn.outputs['exportsStep.cdn.hostName'] ]
     steps: 
     - download: current
       artifact: drop
