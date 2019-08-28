@@ -190,6 +190,6 @@ stages:
         webAppName: '$(ArmOutputs.webAppName)'
         appOffline: true
         package: '$(Pipeline.Workspace)/drop/mvc/*.zip'
-        appSettings: '-ASPNETCORE_ENVIRONMENT Production'
-        deploymentMethod: 'zipDeploy'
+        appSettings: '-ASPNETCORE_ENVIRONMENT Production -LaunchDarkly__Key=$(LaunchDarkly.Key)'
+        deploymentMethod: 'runFromPackage'
         enableCustomDeployment: true
