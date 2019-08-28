@@ -35,7 +35,7 @@ namespace MvcSite
             var launchDarkly = new LdClient(Configuration["LaunchDarkly:Key"]);
 
             services.AddSingleton<ILdClient>(launchDarkly);
-            services.AddOptions<SampleAppOptions>(Configuration.GetSection("SampleApp").Value);
+            services.Configure<SampleAppOptions>(Configuration.GetSection("SampleApp"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
