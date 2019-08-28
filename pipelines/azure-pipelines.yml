@@ -188,14 +188,25 @@ stages:
 
         Convert-ArmOutputToPsObject -ArmOutputString '$(ArmOutputAsString)' -Verbose
       displayName: "Parsing outputs from ARM deployment to pipeline variables"
-    - task: AzureRMWebAppDeployment@4
-      displayName: Deploy to Azure Web App (Windows)
+    # - task: AzureRMWebAppDeployment@4
+    #   displayName: Deploy to Azure Web App (Windows)
+    #   inputs:
+    #     azureSubscription: $(azureServiceEndpoint)
+    #     appType: 'webApp'
+    #     webAppName: '$(ArmOutputs.webAppName)'
+    #     appOffline: true
+    #     package: '$(Pipeline.Workspace)/drop/mvc/*.zip'
+    #     appSettings: '-ASPNETCORE_ENVIRONMENT Production -LaunchDarkly__Key $(LaunchDarkly.Key) -SampleApp__SpaUrl $(ArmOutputs.hostName)'
+    #     deploymentMethod: 'runFromPackage'
+    #     enableCustomDeployment: true
+    - task: AzureRmWebAppDeployment@3
+      displayName: 'Deploy Azure App Service'
       inputs:
         azureSubscription: $(azureServiceEndpoint)
-        appType: 'webApp'
         webAppName: '$(ArmOutputs.webAppName)'
-        appOffline: true
         package: '$(Pipeline.Workspace)/drop/mvc/*.zip'
         appSettings: '-ASPNETCORE_ENVIRONMENT Production -LaunchDarkly__Key $(LaunchDarkly.Key) -SampleApp__SpaUrl $(ArmOutputs.hostName)'
-        deploymentMethod: 'runFromPackage'
-        enableCustomDeployment: true
+        WebAppUri: webAppUrl
+        takeAppOfflineFlag: true
+        useWebDeploy: true
+        renameFilesFlag: true
