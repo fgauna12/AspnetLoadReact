@@ -187,7 +187,7 @@ stages:
       inputs:
         azureSubscription: $(azureServiceEndpoint)
         appType: 'webApp'
-        appName: '$(ArmOutputs.webAppName)'
+        webAppName: '$(ArmOutputs.webAppName)'
         appOffline: true
         package: '$(Pipeline.Workspace)/drop/mvc/*.zip'
         appSettings: '-ASPNETCORE_ENVIRONMENT Production'
