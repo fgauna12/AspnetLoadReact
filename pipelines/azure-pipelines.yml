@@ -21,14 +21,20 @@ stages:
     pool: 
       vmImage: 'ubuntu-latest'
     steps:
-    - script: dotnet build --configuration $(buildConfiguration) -o $(Agent.TempDirectory)/mvc
-      displayName: 'dotnet build $(buildConfiguration)'
-      workingDirectory: ./mvc
-    - script: |
-        echo 'Zipping up the mvc outputs to the staging directory'
-        mkdir -p $(Build.ArtifactStagingDirectory)/mvc 
-        zip -r $(Build.ArtifactStagingDirectory)/mvc/mvc.zip *
-      workingDirectory: $(Agent.TempDirectory)/mvc
+    # - script: dotnet publish --configuration $(buildConfiguration) -o $(Agent.TempDirectory)/mvc
+    #   displayName: 'dotnet publish $(buildConfiguration)'
+    #   workingDirectory: ./mvc
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'publish'
+        publishWebProjects: true
+        arguments: --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/mvc
+        workingDirectory: './mvc'
+    # - script: |
+    #     echo 'Zipping up the mvc outputs to the staging directory'
+    #     mkdir -p $(Build.ArtifactStagingDirectory)/mvc 
+    #     zip -r $(Build.ArtifactStagingDirectory)/mvc/mvc.zip *
+    #   workingDirectory: $(Agent.TempDirectory)/mvc
     - script: |
         echo "installing NPM packages and building"
         npm install
@@ -190,6 +196,6 @@ stages:
         webAppName: '$(ArmOutputs.webAppName)'
         appOffline: true
         package: '$(Pipeline.Workspace)/drop/mvc/*.zip'
-        appSettings: '-ASPNETCORE_ENVIRONMENT Production -LaunchDarkly__Key=$(LaunchDarkly.Key)'
+        appSettings: '-ASPNETCORE_ENVIRONMENT Production -LaunchDarkly__Key $(LaunchDarkly.Key)'
         deploymentMethod: 'runFromPackage'
         enableCustomDeployment: true
