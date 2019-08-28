@@ -21,9 +21,13 @@ stages:
     pool: 
       vmImage: 'ubuntu-latest'
     steps:
-    - script: dotnet build --configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/mvc
+    - script: dotnet build --configuration $(buildConfiguration) -o $(Agent.TempDirectory)/mvc
       displayName: 'dotnet build $(buildConfiguration)'
       workingDirectory: ./mvc
+    - script: |
+        echo 'Zipping up the mvc outputs to the staging directory'
+        zip -r mvc.zip $(Agent.TempDirectory)/mvc
+      workingDirectory: $(Build.ArtifactStagingDirectory)/mvc
     - script: |
         echo "installing NPM packages and building"
         npm install
@@ -183,6 +187,6 @@ stages:
         azureSubscription: $(azureServiceEndpoint)
         appType: 'webApp'
         appName: '$(ArmOutputs.webAppName)'
-        package: '$(System.DefaultWorkingDirectory)/drop/mvc/'
+        package: '$(System.DefaultWorkingDirectory)/drop/mvc/*.zip'
         appSettings: '-AppSettingKey AppSettingValue'
         deploymentMethod: 'auto'
